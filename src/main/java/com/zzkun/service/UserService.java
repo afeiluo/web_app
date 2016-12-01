@@ -1,9 +1,12 @@
 package com.zzkun.service;
 
-import com.zzkun.dao.UserDao;
-import com.zzkun.model.User;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.zzkun.dao.UserDao;
+import com.zzkun.model.User;
 
 /**
  * Service用于标注业务层组件
@@ -27,5 +30,9 @@ public class UserService {
     public boolean loginCheck(User user) {
         User u = userDao.findUserByUserName(user.getUsername());
         return user.getAge() == (u.getAge());
+    }
+
+    public List<User> findUserByPage(int page, int pageSize) {
+        return userDao.findUserByPage(page, pageSize);
     }
 }

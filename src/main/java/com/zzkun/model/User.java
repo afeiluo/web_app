@@ -1,7 +1,9 @@
 package com.zzkun.model;
 
 import java.io.Serializable;
-import java.io.SerializablePermission;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Created by kun on 2016/5/5.
@@ -16,7 +18,6 @@ public class User implements Serializable {
     public void setAge(int age) {
         this.age = age;
     }
-
 
     private String username;
 
@@ -47,5 +48,9 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+    }
 
 }

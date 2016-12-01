@@ -1,8 +1,33 @@
 package com.zzkun;
 
-import org.springframework.test.context.ContextConfiguration;
+import java.util.List;
 
-@ContextConfiguration(locations = { "/springmvc-servlet.xml" })
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.zzkun.model.User;
+import com.zzkun.service.UserService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath*:springmvc-servlet.xml" })
 public class DBTest {
 
+    @Autowired
+    private UserService userService;
+
+    @Test
+    public void testSout() {
+        System.out.println("dddd");
+    }
+
+    @Test
+    public void testDB() {
+        List<User> retUsers = userService.findUserByPage(2, 20);
+        for (User user : retUsers) {
+            System.out.println(user);
+        }
+    }
 }
