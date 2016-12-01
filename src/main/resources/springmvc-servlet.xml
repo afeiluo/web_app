@@ -19,30 +19,42 @@
     </context:component-scan>
     <mvc:annotation-driven></mvc:annotation-driven>
 
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
     <context:component-scan
             base-package="com.sharksharding.core">
         <context:include-filter type="annotation"
-                                expression="org.aspectj.lang.annotation.Aspect" />
+                                expression="org.aspectj.lang.annotation.Aspect"/>
     </context:component-scan>
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="dataSourceGroup" />
+        <property name="dataSource" ref="dataSourceGroup"/>
     </bean>
     <!-- 读写分离配置 -->
-    <bean id="shardRule" class="com.sharksharding.core.shard.ShardRule"
+    <!--<bean id="shardRule" class="com.sharksharding.core.shard.ShardRule"
           init-method="init">
         <property name="isShard" value="false" />
         <property name="wr_index" value="r1w0" />
+    </bean>-->
+    <!-- 单库多片模式 -->
+    <bean id="shardRule" class="com.sharksharding.core.shard.ShardRule"
+          init-method="init">
+        <property name="isShard" value="true"/>
+        <property name="wr_index" value="r1w0"/>
+        <property name="shardMode" value="false"/>
+        <property name="tbRuleArray" value="#id# % 2"/>
+        <property name="tbSuffix" value="_0000"/>
     </bean>
     <bean id="dataSourceGroup" class="com.sharksharding.core.shard.SharkDatasourceGroup">
         <property name="targetDataSources">
             <map key-type="java.lang.Integer">
-                <entry key="0" value-ref="dataSource1" />
-                <entry key="1" value-ref="dataSource2" />
+                <entry key="0" value-ref="dataSource1"/>
+                <entry key="1" value-ref="dataSource2"/>
             </map>
         </property>
     </bean>
 
+    <bean id="propertyPlaceholderConfigurer" class="com.sharksharding.sql.PropertyPlaceholderConfigurer">
+        <constructor-arg name="path" value="classpath:sql.properties"/>
+    </bean>
 
     <bean id="dataSource1" class="com.mchange.v2.c3p0.ComboPooledDataSource"
           destroy-method="close">
@@ -106,27 +118,27 @@
         <property name="testConnectionOnCheckout" value="false"/>
     </bean>
 
-   <!--  配置Jdbc模板
-    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+    <!--  配置Jdbc模板
+     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+         <property name="dataSource" ref="dataSource"/>
+     </bean>
 
-    &lt;!&ndash; 配置事务管理器 &ndash;&gt;
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-          p:dataSource-ref="dataSource"/>
+     &lt;!&ndash; 配置事务管理器 &ndash;&gt;
+     <bean id="transactionManager"
+           class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+           p:dataSource-ref="dataSource"/>
 
-    &lt;!&ndash; 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 &ndash;&gt;
-    <aop:config proxy-target-class="true">
-        <aop:pointcut id="serviceMethod"
-                      expression=" execution(* com.zzkun.service..*(..))"/>
-        <aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice"/>
-    </aop:config>
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>-->
+     &lt;!&ndash; 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 &ndash;&gt;
+     <aop:config proxy-target-class="true">
+         <aop:pointcut id="serviceMethod"
+                       expression=" execution(* com.zzkun.service..*(..))"/>
+         <aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice"/>
+     </aop:config>
+     <tx:advice id="txAdvice" transaction-manager="transactionManager">
+         <tx:attributes>
+             <tx:method name="*"/>
+         </tx:attributes>
+     </tx:advice>-->
     <mvc:resources mapping="/user/" location="/user/**"></mvc:resources>
 
 </beans>

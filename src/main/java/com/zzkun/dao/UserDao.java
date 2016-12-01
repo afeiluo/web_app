@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sharksharding.sql.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -21,9 +22,12 @@ public class UserDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private PropertyPlaceholderConfigurer propertyPlaceholderConfigurer;
 
     public void register(User user) {
-        String sql = "insert into user_info(username,password) values(?, ?)";
+        String sql = propertyPlaceholderConfigurer.getSql("insert", user.getId());
+        // String sql = "insert into user_info(id,username,password) values(" + user.getId() + ",?, ?)";
         jdbcTemplate.update(sql, user.getUsername(), user.getPassword());
 
     }
@@ -31,7 +35,7 @@ public class UserDao {
     public User findUserByUserName(String userName) {
         String sql = "select id, username ,age,password from user_info where username=?";
         final User user = new User();
-        jdbcTemplate.query(sql, new Object[] { userName }, new RowCallbackHandler() {
+        jdbcTemplate.query(sql, new Object[]{userName}, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet resultSet) throws SQLException {
                 user.setId(resultSet.getInt("id"));
@@ -46,7 +50,7 @@ public class UserDao {
     public List<User> findUserByPage(int page, int pageSize) {
         String sql = "select * from user_info limit ?,?";
         final List<User> retList = new ArrayList();
-        jdbcTemplate.query(sql, new Object[] { (page - 1) * pageSize, pageSize }, new RowCallbackHandler() {
+        jdbcTemplate.query(sql, new Object[]{(page - 1) * pageSize, pageSize}, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet resultSet) throws SQLException {
                 User user = new User();

@@ -19,12 +19,14 @@ public class UserService {
     private UserDao userDao;
 
     public boolean register(User user) {
-        User u = userDao.findUserByUserName(user.getUsername());
-        if (u.getId() == 0) {
-            userDao.register(user);
-            return true;
-        }
-        return false;
+//        User u = userDao.findUserByUserName(user.getUsername());
+//        if (u.getId() == 0) {
+//            userDao.register(user);
+//            return true;
+//        }
+//        return false;
+        userDao.register(user);
+        return true;
     }
 
     public boolean loginCheck(User user) {
